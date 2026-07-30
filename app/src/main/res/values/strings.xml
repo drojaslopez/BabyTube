@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BabyTube</string>
+    <string name="lock_screen">Bloquear Pantalla</string>
+    <string name="unlock_screen">Desbloquear</string>
+    <string name="unlock_hint">Mantén presionado para desbloquear</string>
+    <string name="loop_enabled">Bucle activado</string>
+    <string name="loop_disabled">Bucle desactivado</string>
+    <string name="sleep_timer">Temporizador</string>
+    <string name="no_videos_found">No se encontraron videos</string>
+    <string name="grant_permission">Conceder permiso</string>
+    <string name="permission_required">Se requiere permiso para acceder a los videos</string>
+</resources>
