@@ -48,3 +48,12 @@ BabyTube es una aplicación Android nativa diseñada para permitir la reproducci
   - *Dado que* el usuario programa el temporizador (ej. 15, 30, 45 minutos).
   - *Cuando* el tiempo transcurra por completo.
   - *Entonces* la reproducción se pausará y la pantalla bajará el brillo al mínimo o se apagará.
+
+### RF-07: Control Parental (Modo Adulto / Whitelist)
+- **Descripción:** Proteger la biblioteca de videos para que el bebé solo tenga acceso a un catálogo pre-autorizado por el guardián.
+- **Criterios de Aceptación:**
+  - *Dado que* un usuario adulto quiere agregar videos.
+  - *Cuando* toque el botón de Configuración en la lista principal de videos.
+  - *Entonces* saltará un desafío matemático aleatorio ("Adult Gate").
+  - *Si* el adulto acierta, entrará a la vista de selección masiva donde podrá activar casillas de verificación (Checkboxes) conservando su registro al reiniciar la app mediante almacenamiento persistente persistencia (`SharedPreferences`).
+  - *Entonces* la pantalla del bebé se actualizará en tiempo real para mostrar y reproducir única y exclusivamente los elementos aprobados.

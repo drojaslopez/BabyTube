@@ -3,6 +3,7 @@ package com.babytube.player.ui.permissions
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -14,12 +15,13 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 fun PermissionScreen(
     onPermissionGranted: () -> Unit
 ) {
-    val permissionsState = rememberMultiplePermissionsState(
-        permissions = listOf(
-            android.Manifest.permission.READ_MEDIA_VIDEO,
-            android.Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-    )
+    val permissionsToRequest = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        listOf(android.Manifest.permission.READ_MEDIA_VIDEO)
+    } else {
+        listOf(android.Manifest.permission.READ_EXTERNAL_STORAGE)
+    }
+    
+    val permissionsState = rememberMultiplePermissionsState(permissions = permissionsToRequest)
 
     LaunchedEffect(permissionsState.allPermissionsGranted) {
         if (permissionsState.allPermissionsGranted) {

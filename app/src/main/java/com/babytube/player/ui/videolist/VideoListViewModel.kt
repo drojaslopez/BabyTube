@@ -30,11 +30,13 @@ class VideoListViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = VideoListUiState.Loading
             videoRepository.getLocalVideos()
-                .onSuccess { videos ->
-                    _uiState.value = if (videos.isEmpty()) {
+                .onSuccess { allVideos ->
+                    val allowed = videoRepository.getWhitelistedIds()
+                    val filtered = allVideos.filter { allowed.contains(it.id.toString()) }
+                    _uiState.value = if (filtered.isEmpty()) {
                         VideoListUiState.Empty
                     } else {
-                        VideoListUiState.Success(videos)
+                        VideoListUiState.Success(filtered)
                     }
                 }
                 .onFailure { error ->

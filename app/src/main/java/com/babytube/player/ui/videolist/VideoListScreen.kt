@@ -7,10 +7,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,15 +29,26 @@ import java.util.*
 @Composable
 fun VideoListScreen(
     onVideoSelected: (VideoItem) -> Unit,
+    onParentModeClick: () -> Unit,
     viewModel: VideoListViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val selectedVideo by viewModel.selectedVideo.collectAsState()
+    var showMathChallenge by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadVideos()
+    }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("BabyTube") }
+                title = { Text("BabyTube") },
+                actions = {
+                    IconButton(onClick = { showMathChallenge = true }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Modo Padre")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -49,8 +65,9 @@ fun VideoListScreen(
                 }
                 is VideoListUiState.Empty -> {
                     Text(
-                        text = "No videos found",
-                        modifier = Modifier.align(Alignment.Center)
+                        text = "Aún no hay videos aprobados.\n\nPídele a un adulto que presione la rueda dentada \nde arriba para añadirlos.",
+                        modifier = Modifier.align(Alignment.Center),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 }
                 is VideoListUiState.Success -> {
@@ -87,7 +104,54 @@ fun VideoListScreen(
                 }
             }
         }
+        
+        if (showMathChallenge) {
+            MathChallengeDialog(
+                onSuccess = {
+                    showMathChallenge = false
+                    onParentModeClick()
+                },
+                onDismiss = { showMathChallenge = false }
+            )
+        }
     }
+}
+
+@Composable
+fun MathChallengeDialog(onSuccess: () -> Unit, onDismiss: () -> Unit) {
+    val a = remember { (2..9).random() }
+    val b = remember { (2..9).random() }
+    var input by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Verificación para Padres") },
+        text = {
+            Column {
+                Text("Para entrar al modo padre, resuelve:")
+                Spacer(Modifier.height(8.dp))
+                Text("$a x $b = ?", style = MaterialTheme.typography.titleLarge)
+                Spacer(Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = input,
+                    onValueChange = { input = it; error = false },
+                    isError = error,
+                    keyboardOptions = androidx.compose.foundation.text.KeyboardOptions(
+                        keyboardType = androidx.compose.ui.text.input.KeyboardType.Number
+                    )
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                if (input.toIntOrNull() == a * b) onSuccess() else error = true
+            }) { Text("Confirmar") }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancelar") }
+        }
+    )
 }
 
 @Composable

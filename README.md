@@ -1,105 +1,55 @@
-# BabyTube - Android Local Video Player for Babies
+# BabyTube 🍼 📺
+> *Un reproductor de video local ultraseguro diseñado específicamente para bebés y niños pequeños.*
 
-BabyTube es una aplicación Android nativa diseñada para permitir la reproducción de videos locales (almacenados en el dispositivo) para bebés y niños pequeños, evitando interrupciones accidentales mediante un sistema estricto de bloqueo táctil de pantalla (Child Touch Lock).
+BabyTube es una aplicación Android nativa construida para permitir que los más pequeños disfruten de videos guardados de forma local (en la memoria del dispositivo), proporcionando a los padres la tranquilidad de un sistema de reproducción blindado. Su característica estrella es el **Baby Touch Lock**, que previene pausas accidentales o interacciones indeseadas con el sistema operativo (llamadas, salidas a la pantalla de inicio, etc.).
 
-## Características
+---
 
-- **RF-01:** Selección de archivos locales (MP4, MKV, WebM) con permisos de almacenamiento
-- **RF-02:** Reproducción forzada en orientación horizontal (Landscape) con modo inmersivo
-- **RF-03:** Bloqueo táctil completo (Baby Touch Lock) para evitar interacciones accidentales
-- **RF-04:** Mecanismo de desbloqueo seguro mediante pulsación prolongada (3 segundos)
-- **RF-05:** Reproducción en bucle (Loop) para videos individuales
-- **RF-06:** Temporizador de apagado (Sleep Timer) configurable (15, 30, 45, 60 minutos)
+## 🌟 Características Principales
 
-## Stack Tecnológico
+*   **🛡️ Modo Padre con Control de Contenido (Nuevo):** Acceso protegido mediante un desafío matemático (Adult Gate) que permite seleccionar exactamente qué videos (`Whitelist`) se muestran en el perfil del bebé.
+*   **🎞️ Selector Local Protegido:** Soporte nativo para MP4, MKV y WebM, filtrado para no mezclar contenido personal de los adultos.
+*   **🔒 Bloqueo Táctil Extremo (Baby Touch Lock):** Al activarse, intercepta gestos de arrastre, pulsaciones y botones del sistema (Edge-to-Edge immersive).
+*   **🔓 Desbloqueo Seguro:** Botón oculto que requiere mantener presionado ininterrumpidamente por 3 segundos para devolver el control al adulto, con retroalimentación visual de progreso.
+*   **🔁 Reproducción en Bucle Infinito:** Diseñado para la paciencia infantil, cuenta con repetición ininterrumpida de los videos.
+*   **⏱️ Temporizador de Apagado (Sleep Timer):** Configura pausas automáticas tras 15, 30, 45 o 60 minutos.
+*   **📱 Paisaje Forzado:** Orientación 100% horizontal adaptada a los formatos de video.
 
-- **Lenguaje:** Kotlin 1.9+
-- **UI Framework:** Jetpack Compose
-- **Media Engine:** AndroidX Media3 (ExoPlayer)
-- **Inyección de Dependencias:** Hilt
-- **Asincronía & Estado:** Kotlin Coroutines + StateFlow
-- **System UI Control:** Accompanist System UI Controller
+---
 
-## Estructura del Proyecto
+## 🛠️ Stack Tecnológico (Modern Android Development)
 
-```
-Babytube/
-├── app/
-│   ├── src/main/
-│   │   ├── java/com/babytube/player/
-│   │   │   ├── data/
-│   │   │   │   ├── model/VideoItem.kt
-│   │   │   │   └── repository/VideoRepository.kt
-│   │   │   ├── di/
-│   │   │   │   └── AppModule.kt
-│   │   │   ├── ui/
-│   │   │   │   ├── player/
-│   │   │   │   │   ├── PlayerScreen.kt
-│   │   │   │   │   ├── PlayerViewModel.kt
-│   │   │   │   │   └── LockOverlay.kt
-│   │   │   │   ├── videolist/
-│   │   │   │   │   ├── VideoListScreen.kt
-│   │   │   │   │   └── VideoListViewModel.kt
-│   │   │   │   ├── permissions/
-│   │   │   │   │   └── PermissionScreen.kt
-│   │   │   │   ├── theme/
-│   │   │   │   │   ├── Color.kt
-│   │   │   │   │   ├── Theme.kt
-│   │   │   │   │   └── Type.kt
-│   │   │   │   └── BabyTubeApp.kt
-│   │   │   └── MainActivity.kt
-│   │   ├── res/
-│   │   │   └── values/
-│   │   │       ├── strings.xml
-│   │   │       └── themes.xml
-│   │   └── AndroidManifest.xml
-│   ├── build.gradle.kts
-│   └── proguard-rules.pro
-├── openspec/
-│   ├── spec.md
-│   └── architecture.md
-├── build.gradle.kts
-├── settings.gradle.kts
-├── gradle.properties
-└── README.md
-```
+El proyecto respeta los estándares modernos recomendados por Google:
+- **Lenguaje:** Kotlin 1.9.20+
+- **API Compatible:** Android 7.0 (API 24) a **Android 16 (API 36)**
+- **UI & Diseño:** Jetpack Compose (Material 3)
+- **Motor Multimedia:** AndroidX Media3 (ExoPlayer)
+- **Inyección de Dependencias:** Hilt (`@HiltAndroidApp`)
+- **Arquitectura & Estado:** MVVM con Kotlin Coroutines y `StateFlow`.
+- **Navegación:** Jetpack Navigation Compose con Rutas Seguras (URI encoded).
 
-## Configuración
+---
 
-1. Configura tu SDK de Android en `local.properties`:
-   ```
-   sdk.dir=/path/to/your/android/sdk
+## 🚀 Guía de Instalación (Desarrolladores)
+
+1. **Clona el Repositorio** y ábrelo usando **Android Studio** (Koala o superior recomendado).
+2. **Configuración de Gradle:** Asegúrate de tener seleccionado **JDK 17** en *Settings > Build, Execution, Deployment > Build Tools > Gradle*.
+3. **Sincronización:** Android Studio descargará automáticamente el `gradle-wrapper.jar` y las dependencias de Compose y Hilt.
+4. Presiona **Run (▶️)** o compila desde terminal con:
+   ```bash
+   ./gradlew assembleDebug
    ```
 
-2. Sincroniza el proyecto con Gradle
+## 👶 Guía de Uso Rápido
 
-3. Compila y ejecuta en un dispositivo Android o emulador
+1. Al abrir la app, deberás aceptar permisos de Almacenamiento (o Media en Android 13+).
+2. Si la galería del bebé está vacía, aparecerá un mensaje de ayuda. Toca el icono del engranaje (⚙️) que se encuentra en la parte superior derecha.
+3. Resuelve el desafío matemático mental.
+4. Estarás en el **Cuarto de Control (Approve Videos)**. Marca los videos que desees autorizar.
+5. Regresa atrás. ¡El bebé ahora solo verá tu selección!
+6. Al poner un video, toca el icono del candado cerrado para blindar la pantalla.
 
-## Permisos
+---
 
-La aplicación requiere los siguientes permisos:
-- `READ_MEDIA_VIDEO` (Android 13+)
-- `READ_EXTERNAL_STORAGE` (Android 12 y anteriores)
-
-## Uso
-
-1. Concede los permisos de almacenamiento cuando se soliciten
-2. Selecciona un video de la lista
-3. Usa los controles del reproductor:
-   - **Icono de candado:** Bloquear/desbloquear la pantalla
-   - **Icono de loop:** Activar/desactivar reproducción en bucle
-   - **Icono de temporizador:** Configurar temporizador de apagado
-   - **Flecha atrás:** Volver a la lista de videos
-
-## Desbloqueo de Pantalla
-
-Cuando la pantalla está bloqueada:
-1. Mantén presionado el botón de desbloqueo (esquina superior derecha)
-2. Espera 3 segundos hasta que el indicador circular se complete
-3. La pantalla se desbloqueará y los controles reaparecerán
-
-## Especificación OpenSpec
-
-La especificación completa del proyecto se encuentra en la carpeta `openspec/`:
-- `spec.md`: Requerimientos funcionales y criterios de aceptación
-- `architecture.md`: Arquitectura técnica y stack tecnológico
+## 📖 Especificaciones y Agentes (OpenSpec)
+Revisa la carpeta `.openspec/` y `.agents/` para entender las métricas técnicas, la arquitectura de Intercepción Táctil (`LockOverlay`) y las pautas establecidas.

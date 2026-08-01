@@ -16,6 +16,21 @@ class VideoRepository @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
     private val contentResolver: ContentResolver = context.contentResolver
+    private val prefs = context.getSharedPreferences("babytube_prefs", Context.MODE_PRIVATE)
+
+    fun getWhitelistedIds(): Set<String> {
+        return prefs.getStringSet("whitelisted_videos", emptySet()) ?: emptySet()
+    }
+
+    fun toggleWhitelist(id: Long, isWhitelisted: Boolean) {
+        val current = getWhitelistedIds().toMutableSet()
+        if (isWhitelisted) {
+            current.add(id.toString())
+        } else {
+            current.remove(id.toString())
+        }
+        prefs.edit().putStringSet("whitelisted_videos", current).apply()
+    }
 
     suspend fun getLocalVideos(): Result<List<VideoItem>> = withContext(Dispatchers.IO) {
         try {

@@ -7,8 +7,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.babytube.player.data.model.VideoItem
+import android.net.Uri
 import com.babytube.player.ui.player.PlayerScreen
 import com.babytube.player.ui.videolist.VideoListScreen
+
+import com.babytube.player.ui.permissions.PermissionScreen
+import com.babytube.player.ui.parent.ParentSelectionScreen
 
 @Composable
 fun BabyTubeApp(
@@ -17,14 +21,33 @@ fun BabyTubeApp(
 ) {
     NavHost(
         navController = navController,
-        startDestination = "video_list",
+        startDestination = "permissions",
         modifier = modifier
     ) {
+        composable("permissions") {
+            PermissionScreen(
+                onPermissionGranted = {
+                    navController.navigate("video_list") {
+                        popUpTo("permissions") { inclusive = true }
+                    }
+                }
+            )
+        }
+        
         composable("video_list") {
             VideoListScreen(
                 onVideoSelected = { video ->
-                    navController.navigate("player/${video.id}/${video.uri}/${video.name}/${video.duration}/${video.size}/${video.mimeType}")
+                    navController.navigate("player/${video.id}/${Uri.encode(video.uri)}/${Uri.encode(video.name)}/${video.duration}/${video.size}/${video.mimeType.replace("/", "_")}")
+                },
+                onParentModeClick = {
+                    navController.navigate("parent_selection")
                 }
+            )
+        }
+        
+        composable("parent_selection") {
+            ParentSelectionScreen(
+                onBack = { navController.popBackStack() }
             )
         }
         
@@ -36,7 +59,7 @@ fun BabyTubeApp(
             val name = backStackEntry.arguments?.getString("name") ?: ""
             val duration = backStackEntry.arguments?.getString("duration")?.toLong() ?: 0L
             val size = backStackEntry.arguments?.getString("size")?.toLong() ?: 0L
-            val mimeType = backStackEntry.arguments?.getString("mimeType") ?: ""
+            val mimeType = backStackEntry.arguments?.getString("mimeType")?.replace("_", "/") ?: ""
             
             val video = VideoItem(id, uri, name, duration, size, mimeType)
             

@@ -3,6 +3,7 @@ package com.babytube.player.ui.player
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,8 +40,11 @@ fun LockOverlay(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(Unit) {
-                    awaitEachGesture {
-                        awaitFirstDown()
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach { it.consume() }
+                        }
                     }
                 }
         ) {
@@ -62,12 +66,24 @@ fun UnlockZoneButton(
     onUnlocked: () -> Unit
 ) {
     var progress by remember { mutableFloatStateOf(0f) }
-    val unlockDuration = 3000L // 3 seconds
+    var isPressed by remember { androidx.compose.runtime.mutableStateOf(false) }
+    val unlockDuration = 3000f // 3 seconds
     
-    LaunchedEffect(progress) {
-        if (progress >= 1f) {
-            onUnlocked()
+    LaunchedEffect(isPressed) {
+        if (isPressed) {
+            while (progress < 1f) {
+                delay(16)
+                progress = min(progress + (16f / unlockDuration), 1f)
+                onUnlockProgress(progress)
+            }
+            if (progress >= 1f) {
+                onUnlocked()
+                progress = 0f
+                isPressed = false
+            }
+        } else {
             progress = 0f
+            onUnlockProgress(0f)
         }
     }
 
@@ -77,25 +93,13 @@ fun UnlockZoneButton(
             .clip(CircleShape)
             .background(Color.Black.copy(alpha = 0.5f))
             .pointerInput(Unit) {
-                awaitEachGesture {
-                    val down = awaitFirstDown()
-                    progress = 0f
-                    
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        val change = event.changes.first()
-                        
-                        if (!change.pressed) {
-                            progress = 0f
-                            onUnlockProgress(0f)
-                            break
-                        }
-                        
-                        progress = min(progress + (16f / unlockDuration), 1f)
-                        onUnlockProgress(progress)
-                        delay(16)
+                detectTapGestures(
+                    onPress = {
+                        isPressed = true
+                        tryAwaitRelease()
+                        isPressed = false
                     }
-                }
+                )
             },
         contentAlignment = Alignment.Center
     ) {
